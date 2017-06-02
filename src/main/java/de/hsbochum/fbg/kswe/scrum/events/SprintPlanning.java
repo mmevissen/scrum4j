@@ -16,6 +16,11 @@ public class SprintPlanning implements Event {
 
     private final List<BacklogItem> items = new ArrayList<>();
     private final int itemCount;
+    private final int count = 1;
+
+    public int getCount() {
+        return count;
+    }
 
     public SprintPlanning(int itemCount) {
         this.itemCount = itemCount;
@@ -42,7 +47,8 @@ public class SprintPlanning implements Event {
 
     @Override
     public Class<? extends Event> followingEventType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Sprint.class;
     }
 
 }

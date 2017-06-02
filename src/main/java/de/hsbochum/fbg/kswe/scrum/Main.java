@@ -21,23 +21,16 @@ public class Main {
         try {
             Scrum scrum = new Scrum(prepareProductBacklog());
             
-            scrum.planSprint(2);
-            scrum.startSprint(14);
-            
-            scrum.reviewSprint();
-            
-            scrum.planSprint(2);
-            scrum.startSprint(10);
-            
-            scrum.doSprintRetrospective();
-            
-            scrum.planSprint(2);
-
+            scrum.runSprint(2);
+           
+                       
         } catch (UnexpectedNextEventException | InitializationException |
                 InvalidSprintPeriodException ex) {
             LOG.warn(ex.getMessage(), ex);
         }
     }
+
+   
     
     private static ProductBacklog prepareProductBacklog() {
         ProductBacklog bl = new ProductBacklog();

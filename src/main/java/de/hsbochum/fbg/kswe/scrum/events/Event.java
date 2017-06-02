@@ -29,4 +29,6 @@ public interface Event {
      */
     void init(Event previous, ProductBacklog productBacklog) throws InitializationException;
     
+    int getCount();
+    
 }
