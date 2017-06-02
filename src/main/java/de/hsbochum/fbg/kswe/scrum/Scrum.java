@@ -14,36 +14,47 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- *
  * @author <a href="mailto:m.rieke@52north.org">Matthes Rieke</a>
  */
 public class Scrum {
-    
+
     private static final Logger LOG = LogManager.getLogger(Scrum.class);
+
+    private final int numberOfDays;
 
     private final ProductBacklog productBacklog;
     private Event currentEvent;
     private Sprint initialSprint;
-    
-    public Scrum(ProductBacklog pbl) {
+
+    public Scrum(ProductBacklog pbl, int numberOfDays) {
         this.productBacklog = pbl;
+        this.numberOfDays = numberOfDays;
     }
 
     private void moveToNextEvent(Event event) throws UnexpectedNextEventException, InitializationException {
         LOG.info("Moving to next event...");
         Event previousEvent = null;
-        
+
         if (this.currentEvent == null) {
             this.currentEvent = event;
-        }
-        else {
+        } else {
             /*
              * TODO implement the assertion of the logical order. Throw an
              * UnexpectedNextEventException if the order is not correct.
              * Hint: the method Class#isAssignableFrom() might be helpful
              */
+
+            if (currentEvent.followingEventType() != event.getClass()) {
+                throw new UnexpectedNextEventException(
+                        String.format("The logical order of scrum was violated. %s can't be followed by %s",
+                                currentEvent.followingEventType(),
+                                event.getClass()));
+            } else {
+                previousEvent = currentEvent;
+                currentEvent = event;
+            }
         }
-        
+
         event.init(previousEvent, productBacklog);
         LOG.info("Moved to next event: {}", event);
     }
@@ -52,13 +63,17 @@ public class Scrum {
         SprintPlanning planning = new SprintPlanning(itemCount);
         moveToNextEvent(planning);
     }
-    
+
     public void startSprint(int numberOfDays) throws UnexpectedNextEventException, InitializationException, InvalidSprintPeriodException {
         Sprint sprint = new Sprint(numberOfDays);
         ensureCorrectNumberOfDays(sprint);
         moveToNextEvent(sprint);
     }
-    
+
+    public void startSprint() throws UnexpectedNextEventException, InitializationException, InvalidSprintPeriodException {
+        startSprint(numberOfDays);
+    }
+
     public void doDailyScrum() {
     }
 
@@ -75,8 +90,7 @@ public class Scrum {
     private void ensureCorrectNumberOfDays(Sprint sprint) throws InvalidSprintPeriodException {
         if (initialSprint == null) {
             initialSprint = sprint;
-        }
-        else {
+        } else {
             if (initialSprint.getNumberOfDays() != sprint.getNumberOfDays()) {
                 throw new InvalidSprintPeriodException(String.format(
                         "Sprints always have to have same period. Expected: %s. Got: %s",

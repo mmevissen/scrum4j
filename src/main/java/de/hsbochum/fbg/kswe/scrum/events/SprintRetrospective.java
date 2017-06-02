@@ -11,6 +11,7 @@ public class SprintRetrospective implements Event {
 
     @Override
     public Class<? extends Event> followingEventType() {
+
         return SprintPlanning.class;
     }
 
